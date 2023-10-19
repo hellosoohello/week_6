@@ -5,11 +5,10 @@ let monsterProperties = {
   "name" : "monster",
   "shape" : "slime",
   "color" : [0,0,0],
-  "age" : 0,
+  "age" : 2,
   "posX" : 0,
   "posY" : 0,
   "size" : 0,
-  "healthy" : 1,
   "happy" : 0,
   "tired" : 0,
   "hunger" : 0,
@@ -62,7 +61,7 @@ let foodX = 0;
 let foodY = 0;
 
 function setup() {
-  createCanvas(320, 160);
+  createCanvas(430, 500);
   getCurrentTime(); // we get the time they start the game
   generateMonster();
   noStroke();
@@ -76,34 +75,30 @@ function setup() {
   monsterProperties["posY"] = height/2;
 
   // light button
-  lightButton = createButton('light');
-  lightButton.position(width/2 - 60, height - 30);
+  lightButton = createButton('Dance');
+  lightButton.position(width/2, height - 30);
   lightButton.style('font-family', 'Comic Sans MS');
   lightButton.style('font-size', '10px');
   lightButton.style('align', 'center');
   lightButton.mousePressed(light);
 
-  // play button
-  playButton = createButton('play');
-  playButton.position(width/2 - 10, height - 30);
-  playButton.style('font-family', 'Comic Sans MS');
-  playButton.style('font-size', '10px');
-  playButton.mousePressed(play);
-
-  // poop button
-  poopButton = createButton('poop');
-  poopButton.position(width/2 + 35, height - 30);
-  poopButton.style('font-family', 'Comic Sans MS');
-  poopButton.style('font-size', '10px');
-  poopButton.mousePressed(poop);  
 }
 
 function draw() {
   // draw background scene
   if (lightState == true) {
+
     background(seaG);
+    
   } else {
+
     background(darkG);
+    for (let x=0; x<500;x+=30){
+      for (let y=0;y<= 800;y +=40){
+        fill (random(50), random(100), random(150));
+        ellipse(x,y,40,40);
+      }
+    }
   }
   
   // draw ui
@@ -139,7 +134,7 @@ function drawUI() {
   textAlign(LEFT);
   fill(seaG);
   text("Age: " + monsterProperties["age"], 10, 15);
-  text("Healthy: " + monsterProperties["healthy"], 50, 15);
+  text("Happy dance power: " + monsterProperties["happy"], 50, 15);
 
   // calculate time left in day
   timeLeftInDay = lengthOfDay - (cMillis - resetTime);
@@ -149,6 +144,7 @@ function drawUI() {
   fill(darkG);
   rectMode(CORNER);
   rect(0, height - 5, mappedTime, 5);
+  
 }
 
 function gameOver() {
@@ -168,54 +164,27 @@ function checkForFleas() {
 
 }
 
-function drawFleas() {
-  flyX += random(-1, 1);
-  flyY += random(-1, 1);
-
-  flyX = constrain(flyX, 100, 200);
-  flyY = constrain(flyY, 50, 110);
-
-  fill(darkG);
-  ellipse(flyX, flyY, 5, 5);
-
-  if (dist(monsterProperties["posX"], monsterProperties["posY"], flyX, flyY) <= 20) {
-    if (monsterProperties["healthy"]  > 0) {
-      monsterProperties["healthy"] -= 1;
-    } 
-  }
-
-  if (monsterProperties["healthy"] <= 0) {
-    gameOver();
-  }
-}
-
-function play() {
-  if (monsterProperties["mood"] < 4) {
-    monsterProperties["mood"] += 1;
-  }
-
-  console.log("current mood: " + monsterProperties["mood"]);
-  console.log("play... coming soon!");
-}
-
-function poop() {
-  console.log("poop... coming soon!");
-}
 
 function light() {
-  if (monsterProperties["mood"] > 0) {
-    monsterProperties["mood"] -= 1;
-  }
+  monsterProperties["mood"] = 0;
+  monsterProperties["happy"] = 0;
 
   console.log("toggle light: " + lightState);
+ 
 
   // this is a clever way to toggle a variable on and off
   lightState = !lightState;
+
+  if(!lightState)
+  {
+    monsterProperties["mood"] = 100;
+    monsterProperties["happy"] = 1;
+ 
+  }
+  
+
 }
 
-function feed() {
-  console.log("feeding...");
-}
 
 function newDay() {
   // each minute is one day
@@ -250,8 +219,8 @@ function getCurrentTime() {
 
 
 function drawFood() {
-  fill(limeG);
-  ellipse(foodX, foodY, 10, 10);
+ // fill(limeG);
+ // ellipse(foodX, foodY, 10, 10);
 }
 
 function checkCollisionWithFood() {
